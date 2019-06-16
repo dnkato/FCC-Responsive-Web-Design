@@ -1,0 +1,70 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+
+html,body {
+    font-family: Roboto;
+}
+
+.max-width-limited {
+    max-width: 600px;
+}
+
+#main {
+    background-color: hsl(240,30%,80%);
+    margin: 10px;
+}
+
+.title-section {
+    text-align: center;
+    padding: 1em;
+}
+
+#img-div {
+    background-color: hsl(240,30%,90%);
+    padding: 1em;
+}
+
+#img-caption {
+    padding: 0.5em;
+    text-align: center;
+}
+
+#image {
+    max-width: 100%;
+    display: block;
+    height: auto;
+    margin: auto;
+    border-radius: 10px;
+}
+
+#tribute-info {
+    margin:0 auto;
+    padding: 0 1.5em;
+}
+
+#tribute-info li {
+    padding-bottom: 0.5em;
+}
+
+#quote-div {
+    margin: auto;           /* centers the div in the screen */
+    text-align: center;     /* centers the text within the div */
+    font-size: 1.2em;
+    font-style: italic;
+    padding: 0.5em;
+    border: 2px solid hsl(240,30%,90%);
+    background-color: hsl(240,30%,70%);
+    border-radius: 10px;
+    box-shadow: 0 10px 20px #222;
+}
+
+#link-div {
+    text-align:center;
+    font-size: 1.5em;
+    font-weight: bold;
+    background-color: hsl(240,30%,90%);
+    padding: 1em;
+    margin-top: 2em;
+}
+ #link-div a:hover {
+     color: hsl(240,30%,50%);
+ }

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>FCC: Survey Form</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!--Start of codePen.io -->
+<div class="container">
+<h1 id="title">Reading Survey</h1>
+<hr>
+<p id="description">Tell us about your reading habits</p>
+<form id="survey-form">
+    <div class="row">
+        <label class="col-right" id="name-label" for="name">* Name:</label>
+        <input class="col-left" id="name" type="text" required placeholder="Your Name">
+    </div>
+    <div class="row">
+        <label class="col-right" id="email-label" for="email">* Email:</label>
+        <input class="col-left" id="email" type="email" required placeholder="Your Email Address">
+    </div>
+    <div class="row">
+        <label class="col-right" id="dropdown-label" for="dropdown">Highest Education Level:</label>
+        <select class="col-left" id="dropdown">
+            <option value="none">No High School</option>
+            <option value="hs">High School Diploma</option>
+            <option value="associate">Associate Degree</option>
+            <option value="bachelor">Bachelor's Degree</option>
+            <option value="master">Master's Degree</option>
+            <option value="doctorate">Doctorate/Professional Degree</option>
+        </select>
+    </div>
+    <div class="row">
+        <label class="col-right" id="number-label" for="number">How many books did you read last year?:</label>
+        <input class="col-left" id="number" type="number" min="0" max="365" placeholder="# Books">
+    </div>
+    <div class="row">
+        <span class="col-right">Do you enjoy reading?:</span>
+        <div class="col-left">
+            <label for="enjoy-yes"><input type="radio" name="enjoy" value="yes">Yes</label><br>
+            <label for="enjoy-sometimes"><input type="radio" name="enjoy" value="sometimes">Sometimes</label><br>
+            <label for="enjoy-no"><input type="radio" name="enjoy" value="no">No</label>
+        </div>
+    </div>
+    <div class="row">
+        <span class="col-right">I read the following:</span>
+        <div class="col-left">
+            <input type="checkbox" name="read1" value="books">books<br>
+            <input type="checkbox" name="read2" value="magazines">magazines<br>
+            <input type="checkbox" name="read3" value="newspapers">newspapers <br>
+            <input type="checkbox" name="read4" value="audiobooks">audiobooks
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-right">What is your favorite book? Why?</div>
+        <textarea class="col-left"></textarea>
+    </div>
+    <button id="submit" class="btn" type="submit">Submit</button>
+</form>
+</div>
+<!-- End of codePen.io -->
+
+<!-- Uncomment out the script below to run the FreeCodeCamp test scripts-->
+<!--
+<script src="https://cdn.freecodecamp.org/testable-projects-fcc/v1/bundle.js"></script>
+-->
+
+
+</body>
+</html>

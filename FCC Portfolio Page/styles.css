@@ -1,0 +1,134 @@
+@import url('https://fonts.googleapis.com/css?family=Merriweather');
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+
+
+* {
+    padding: 0;
+    margin: 0;
+}
+
+
+html, body {
+    font-family: Merriweather;
+    background-color: hsl(258,100%,90%);
+    overflow-x: hidden; /* TODO: get rid of horizontal overflow, just hide for now */ 
+}
+
+/* --- Adjust the image and font size based on the browser width --- */
+
+#projects img {
+    width: 200px;
+    height: auto;
+    border: 3px solid white;
+}
+
+@media (min-width: 1205px) {
+    body {
+        font-size: 20px;
+    }
+    #projects img {
+        width: 250px;
+    }
+}
+
+@media (min-width: 1450px) {
+    body {
+        font-size: 25px;
+    }
+    #projects img {
+        width: 300px;
+    }
+}
+
+/* --- End of media query adjustments --- */
+
+#navbar {
+    background-color: hsl(258,100%,90%);
+    padding: 1em;
+    text-align: right;
+    /* The following lines make the navbar always appear at the top */
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+}
+
+#navbar li {
+    display: inline;
+}
+
+#navbar a{
+    font-size: 1.2em;
+    padding: 0em 2em;
+    text-decoration: none;
+    color: black;
+}
+
+#navbar a:hover {
+    font-weight: bolder;
+}
+
+.container {
+    width: 100vw;             /* 100% of viewport width */
+    display: flex;
+    align-items: center;      /* aligns the middle (y-axis) */
+    justify-content: center;  /* aligns the center (x-axis) */
+    text-align: center;
+}
+
+.container p, .container h1 {
+    margin-right: 17px; /* compensate for verticle scroll bar */
+}
+
+#welcome-section {
+    height: 100vh;      /* 100% of viewport height */
+    background-color: hsl(258,100%,90%);
+}
+
+#projects {
+    min-height: 100vh;  /* 100% of viewport height or greater */
+    background-color: hsl(258,100%,85%);
+}
+
+.project-tiles {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    margin-right: 17px; /* compensate for verticle scroll bar */
+}
+
+.project-tile {
+    margin: 1em;
+    font-size:0.8em;
+}
+
+#projects p {
+    margin-right: 0;
+}
+
+#contact {
+    height: 100vh;      /* 100% of viewport height */
+    background-color: hsl(258,100%,80%);
+}
+
+#contact a {
+    text-decoration: none;
+    font-weight: bolder;
+}
+
+.contact-links {
+    margin-top: 2em;
+}
+
+.contact-link {
+    padding: 1em;
+    margin-right: 1em;
+    color: hsl(258,100%,50%);
+    /* border: 1px solid hsl(258,100%,60%); */
+    border-radius: 20px;
+    background-color: #ccc;
+}
+
+.contact-link:hover {
+    background-color:#ddd;
+}

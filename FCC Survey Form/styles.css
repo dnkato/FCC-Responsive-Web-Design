@@ -1,0 +1,67 @@
+@import url(https://fonts.googleapis.com/css?family=Merriweather:300,400,700,900);
+
+/* TODO: add media queries to improve appearance on phones */
+
+body {
+    text-align: center;
+    font-family: Merriweather;
+    /* Center and scale the image nicely */
+    background-color: rgb(178, 229, 226);
+    background-image: url("Images/books.jpg");
+    /*background-image: url("https://timedotcom.files.wordpress.com/2017/12/mn48.jpg"); */
+    background-position: center;
+    /*background-repeat: no-repeat; */
+    background-size: cover;
+}
+
+.container {
+    background-color: #f7f7f7;
+    max-width: 600px;
+    display: block;
+    margin: auto;
+    margin-top: 2em;
+    padding: 1em;
+    border-radius: 10px;
+    box-shadow: 0 10px 20px #555;
+}
+
+.btn {
+    background-color: rgb(0, 140, 255);
+    color: white;
+    font-weight: bold;
+    padding: 1em;
+    border: none;
+    border-radius: 10px;
+    display: block;
+    margin:20px auto;
+}
+
+.btn:hover {
+    background-color: rgb(0, 68, 255);
+}
+
+.row {
+    padding: 10px;
+    display: flex;
+}
+
+.col-right {
+    width: 50%;
+    font-weight: bold;
+    text-align: right;
+    padding: 0.5em;
+}
+
+.col-left {
+    width: 50%;
+    font-weight: bold;
+    text-align: left;
+}
+
+textarea {
+    height: 6em;;
+}
+#number {
+    width: 6em;
+    margin: 1em 0px;
+}

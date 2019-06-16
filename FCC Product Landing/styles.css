@@ -1,0 +1,119 @@
+@import url('https://fonts.googleapis.com/css?family=Metamorphous');
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+
+@media (min-width: 424px){
+    iframe {
+        width: 424px;
+        height: 238px;
+    }
+    .header-spacing {
+        height: 150px;
+    }
+}
+@media (min-width: 636px){
+    iframe {
+        width: 636px;
+        height: 357px;
+    }
+    .header-spacing {
+        height: 70px;
+    }
+}
+
+html, body{
+    background-color: #ccc;
+    text-align: center;
+    font-family: Metamorphous;
+}
+
+#header-img {
+    height: 50px;
+}
+
+.header-container {
+    display: flex;
+    background-color: #ccc;
+    align-items: center;
+    position: fixed;
+    left:0;
+    top: 0;
+    width: 100%;
+    border-bottom: 1px  solid #bbb;
+}
+
+.header-container nav {
+    flex-grow: 1;
+    text-align: end;
+    font-size: 1.2em;
+}
+
+#nav-bar li {
+     display: inline;
+}
+
+#nav-bar a {
+    display: inline-block;
+    padding: 0.5em;
+    text-decoration: none;
+    color: black;
+}
+
+#nav-bar a:hover {
+    background-color: #ddd;
+}
+
+ #email {
+     margin-bottom: 0.5em;
+     padding: 0.5em;
+     width: 300px;
+ }
+
+ .btn {
+    background-color: #ffd900;
+    border: none;
+    padding: 0.5em;
+    font-family: Roboto;
+    font-weight: bold;
+}
+
+.btn:hover {
+    background-color: #ffae00;
+}
+
+ #video {
+     display: block;
+     margin: auto;
+     padding: 2em;
+ }
+
+ .shop-items {
+     display: flex;
+     flex-wrap: wrap;
+     justify-content: center; 
+ }
+
+ .shop-item{
+     margin: 30px;
+     width: 300px;
+     border: 1px solid black;
+ }
+
+ .shop-item-title {
+     font-size: 1.2em;
+     font-weight: bold;
+     background-color: #aaa;
+     padding: 0.5em;
+ } 
+ .shop-item-price {
+     font-size: 1.5em;
+     font-weight: bold;
+     padding: 0.5em;
+ }
+ .shop-item-detail {
+     padding: 0.5em;
+     height: 4em;
+ }
+ 
+ .shop-item-btn {
+     margin-bottom: 1em;
+ }

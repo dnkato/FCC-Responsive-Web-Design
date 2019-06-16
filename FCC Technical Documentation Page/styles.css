@@ -1,0 +1,77 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+
+html,body {
+    font-family: Roboto;
+}
+
+@media (min-width:600px) {
+    #navbar {
+        height: 100%;
+        width: 13em;
+        position: fixed;
+        z-index: 1;
+        top: 0;
+        left: 0;
+        /*background-color: yellow;*/
+        border-right: 1px solid black;
+        text-align: center;
+        overflow: auto;
+    }
+
+    .main-section {
+        padding-left: 15em;; /* width of navbar + 2 */
+    }
+}
+
+.navbar-heading {
+    text-align: center;
+}
+
+#navbar a {
+    padding: 0.5em 1em;
+    text-decoration: none;
+    display: block;
+    border-top: 1px solid black;
+    color: black;
+    font-size: 1.2em;
+}
+
+#navbar a:hover {
+    font-weight: bolder;
+}
+#navbar a:last-child {
+    border-bottom: 1px solid black;
+}
+
+
+/* I copied the following from Stack Overflow: */
+pre {
+    background: #f4f4f4;
+    border: 1px solid #ddd;
+    /*
+    border-left: 3px solid #f36d33;
+    */
+    color: #666;
+    page-break-inside: avoid;
+    font-family: monospace;
+    /*
+    font-size: 15px;
+    line-height: 1.6;
+    */
+    margin-bottom: 1.6em;
+    max-width: 100%;
+    overflow: auto;
+    padding: 1em 1.5em;
+    display: block;
+    word-wrap: break-word;
+}
+
+code {
+    background: #f4f4f4;
+}
+
+.IMPORTANT {
+    background-color: rgb(216, 232, 242);
+    padding: 10px;
+    border-radius: 10px;
+}

@@ -1,0 +1,29 @@
+
+@import url(https://fonts.googleapis.com/css?family=Merriweather:300,400,700,900);
+
+.container-fluid {
+    font-family: Merriweather;
+}
+
+.row {
+    padding: 0.5em;
+}
+
+#title-container {
+    background-color: rgba(0,0,0,.50);
+    /*background-image: url("https://timedotcom.files.wordpress.com/2017/12/mn48.jpg"); */
+    background-image: url("Images/books.jpg"); 
+    background-size: cover;
+    background-blend-mode: multiply;
+    color: white;
+    margin: 1em;
+    padding: 1em;
+}
+
+#submit {
+    margin: 1em;
+}
+
+textarea {
+    height: 6em;;
+}

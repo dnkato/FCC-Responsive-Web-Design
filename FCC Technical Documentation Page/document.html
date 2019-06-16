@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<head>
+    <title>FCC: Technical Documentation Page</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+<main id="main-doc">
+
+<nav id="navbar">
+    <header>
+        <h1 class="navbar-heading">Tour of C#</h1>
+    </header>
+    <a class="nav-link" href="#Program_Structure">Program Structure</a>
+    <a class="nav-link" href="#Types_and_Variables">Types and Variables</a>
+    <a class="nav-link" href="#Expressions">Expressions</a>
+    <a class="nav-link" href="#Statements">Statements</a>
+    <a class="nav-link" href="#Classes_and_Objects">Classes and Objects</a>
+    <a class="nav-link" href="#Reference">Reference</a>
+</nav>
+
+<section id="Program_Structure" class="main-section">
+    <header>
+        <h2 class="main-section-heading">Program Structure</h2>
+    </header>
+    <div class="section-content">
+    <!-- <content> -->
+
+    <p>The key organizational concepts in C# are <em><strong>programs</strong></em>, <em><strong>namespaces</strong></em>, <em><strong>types</strong></em>, <em><strong>members</strong></em>, and <em><strong>assemblies</strong></em>. C# programs consist of one or more source files. Programs declare types, which contain members and can be organized into namespaces. Classes and interfaces are examples of types. Fields, methods, properties, and events are examples of members. When C# programs are compiled, they are physically packaged into assemblies. Assemblies typically have the file extension <code>.exe</code> or <code>.dll</code>, depending on whether they implement <em><strong>applications</strong></em> or <em><strong>libraries</strong></em>, respectively.</p>
+    <p>The example declares a class named <code>Stack</code> in a namespace called <code>Acme.Collections</code>:</p>
+    <pre><code class="lang-csharp" name="Stack">
+using System;
+namespace Acme.Collections
+{
+public class Stack
+{
+Entry top;
+public void Push(object data) 
+{
+    top = new Entry(top, data);
+}
+
+public object Pop() 
+{
+    if (top == null)
+    {
+        throw new InvalidOperationException();
+    }
+    object result = top.data;
+    top = top.next;
+    return result;
+}
+
+class Entry
+{
+    public Entry next;
+    public object data;
+    public Entry(Entry next, object data)
+    {
+        this.next = next;
+        this.data = data;
+    }
+}
+}
+}
+        </code></pre>
+        <p>The fully qualified name of this class is <code>Acme.Collections.Stack</code>. The class contains several members: a field named <code>top</code>, two methods named <code>Push</code> and <code>Pop</code>, and a nested class named <code>Entry</code>. The <code>Entry</code> class further contains three members: a field named <code>next</code>, a field named <code>data</code>, and a constructor. Assuming that the source code of the example is stored in the file <code>acme.cs</code>, the command line</p>
+        <pre><code>csc /t:library acme.cs
+        </code></pre>
+        <p>compiles the example as a library (code without a <code>Main</code> entry point) and produces an assembly named <code>acme.dll</code>.</p>
+        <div class="IMPORTANT">
+        <p><strong>Important</strong></p>
+        <p>The examples above use <code>csc</code> as the command line C# compiler. This compiler is a Windows executable. To use C# across other platforms, you should use the tools for .NET Core. The .NET Core ecosystem uses the <code>dotnet</code> CLI to manage command line builds. This includes managing dependencies, and invoking the C# compiler. See <a href="../../core/tutorials/using-with-xplat-cli" data-linktype="relative-path">this tutorial</a> for a full description of those tools on the platforms supported by .NET Core.</p>
+        </div>
+        <p>Assemblies contain executable code in the form of Intermediate Language (IL) instructions, and symbolic information in the form of metadata. Before it is executed, the IL code in an assembly is automatically converted to processor-specific code by the Just-In-Time (JIT) compiler of .NET Common Language Runtime.</p>
+        <p>Because an assembly is a self-describing unit of functionality containing both code and metadata, there is no need for <code>#include</code> directives and header files in C#. The public types and members contained in a particular assembly are made available in a C# program simply by referencing that assembly when compiling the program. For example, this program uses the <code>Acme.Collections.Stack</code> class from the <code>acme.dll</code> assembly:</p>
+        <pre><code class="lang-csharp" name="UsingStack">
+using System;
+using Acme.Collections;
+class Example
+{
+static void Main() 
+{
+Stack s = new Stack();
+s.Push(1);
+s.Push(10);
+s.Push(100);
+Console.WriteLine(s.Pop());
+Console.WriteLine(s.Pop());
+Console.WriteLine(s.Pop());
+}
+}
+        </code></pre>
+        <p>If the program is stored in the file <code>example.cs</code>, when <code>example.cs</code> is compiled, the acme.dll assembly can be referenced using the compiler’s /r option:</p>
+        <pre><code>csc /r:acme.dll example.cs
+        </code></pre>
+        <p>This creates an executable assembly named <code>example.exe</code>, which, when run, produces the output:</p>
+        <pre><code>
+100
+10
+1
+        </code></pre>
+        <p>C# permits the source text of a program to be stored in several source files. When a multi-file C# program is compiled, all of the source files are processed together, and the source files can freely reference each other—conceptually, it is as if all the source files were concatenated into one large file before being processed. Forward declarations are never needed in C# because, with very few exceptions, declaration order is insignificant. C# does not limit a source file to declaring only one public type nor does it require the name of the source file to match a type declared in the source file.</p>
+        <!--
+        <div class="step-by-step">
+        <p><a href="index" data-linktype="relative-path">Previous</a>
+        <a href="types-and-variables" data-linktype="relative-path">Next</a></p>
+        </div>
+        -->
+
+        <!-- </content> -->
+
+    </div>
+</section>
+
+<section id="Types_and_Variables" class="main-section">
+    <header>
+        <h2 class="main-section-heading">Types and Variables</h2>
+    </header>
+    <div class="section-content">
+
+                <!-- </content> -->
+                    
+<p>There are two kinds of types in C#: <em>value types</em> and <em>reference types</em>. Variables of value types directly contain their data whereas variables of reference types store references to their data, the latter being known as objects. With reference types, it is possible for two variables to reference the same object and thus possible for operations on one variable to affect the object referenced by the other variable. With value types, the variables each have their own copy of the data, and it is not possible for operations on one to affect the other (except in the case of <code>ref</code> and <code>out</code> parameter variables).</p>
+<p>C#’s value types are further divided into <em>simple types</em>, <em>enum types</em>, <em>struct types</em>, and <em>nullable value types</em>. C#’s reference types are further divided into <em>class types</em>, <em>interface types</em>, <em>array types</em>, and <em>delegate types</em>.</p>
+<p>The following provides an overview of C#’s type system.</p>
+<ul>
+<li><a href="../language-reference/keywords/value-types-table" data-linktype="relative-path">Value types</a>
+<ul>
+<li><a href="../language-reference/keywords/value-types#simple-types" data-linktype="relative-path">Simple types</a>
+<ul>
+<li>Signed integral: <code>sbyte</code>, <code>short</code>, <code>int</code>, <code>long</code></li>
+<li>Unsigned integral: <code>byte</code>, <code>ushort</code>, <code>uint</code>, <code>ulong</code></li>
+<li>Unicode characters: <code>char</code></li>
+<li>IEEE floating point: <code>float</code>, <code>double</code></li>
+<li>High-precision decimal: <code>decimal</code></li>
+<li>Boolean: <code>bool</code></li>
+</ul>
+</li>
+<li><a href="../language-reference/keywords/enum" data-linktype="relative-path">Enum types</a>
+<ul>
+<li>User-defined types of the form <code>enum E {...}</code></li>
+</ul>
+</li>
+<li><a href="../language-reference/keywords/struct" data-linktype="relative-path">Struct types</a>
+<ul>
+<li>User-defined types of the form <code>struct S {...}</code></li>
+</ul>
+</li>
+<li><a href="../programming-guide/nullable-types/index" data-linktype="relative-path">Nullable value types</a>
+<ul>
+<li>Extensions of all other value types with a <code>null</code> value</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="../language-reference/keywords/reference-types" data-linktype="relative-path">Reference types</a>
+<ul>
+<li><a href="../language-reference/keywords/class" data-linktype="relative-path">Class types</a>
+<ul>
+<li>Ultimate base class of all other types: <code>object</code></li>
+<li>Unicode strings: <code>string</code></li>
+<li>User-defined types of the form <code>class C {...}</code></li>
+</ul>
+</li>
+<li><a href="../language-reference/keywords/interface" data-linktype="relative-path">Interface types</a>
+<ul>
+<li>User-defined types of the form <code>interface I {...}</code></li>
+</ul>
+</li>
+<li><a href="../programming-guide/arrays/index" data-linktype="relative-path">Array types</a>
+<ul>
+<li>Single- and multi-dimensional, for example, <code>int[]</code> and <code>int[,]</code></li>
+</ul>
+</li>
+<li><a href="../language-reference/keywords/delegate" data-linktype="relative-path">Delegate types</a>
+<ul>
+<li>User-defined types of the form <code>delegate int D(...)</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>The eight integral types provide support for 8-bit, 16-bit, 32-bit, and 64-bit values in signed or unsigned form.</p>
+<p>The two floating-point types, <code>float</code> and <code>double</code>, are represented using the 32-bit single-precision and 64-bit double-precision IEC-60559 formats, respectively.</p>
+<p>The <code>decimal</code> type is a 128-bit data type suitable for financial and monetary calculations.</p>
+<p>C#’s <code>bool</code> type is used to represent Boolean values—values that are either <code>true</code> or <code>false</code>.</p>
+<p>Character and string processing in C# uses Unicode encoding. The <code>char</code> type represents a UTF-16 code unit, and the <code>string</code> type represents a sequence of UTF-16 code units.</p>
+<p>This summarizes C#’s numeric types.</p>
+<ul>
+<li>Signed Integral
+<ul>
+<li><code>sbyte</code>:  8 bits, range from -128 to 127</li>
+<li><code>short</code>: 16 bits, range from -32,768 to 32,767</li>
+<li><code>int</code>  : 32 bits, range from -2,147,483,648 to 2,147,483,647</li>
+<li><code>long</code> : 64 bits, range from -9,223,372,036,854,775,808 to 9,223,372,036,854,775,807</li>
+</ul>
+</li>
+<li>Unsigned integral
+<ul>
+<li><code>byte</code>   :  8 bits, range from 0 to 255</li>
+<li><code>ushort</code> : 16 bits, range from 0 to 65,535</li>
+<li><code>uint</code>   : 32 bits, range from 0 to 4,294,967,295</li>
+<li><code>ulong</code>  : 64 bits, range from 0 to 18,446,744,073,709,551,615</li>
+</ul>
+</li>
+<li>Floating point
+<ul>
+<li><code>float</code>  : 32 bits, range from 1.5 × 10<sup>-45</sup> to 3.4 × 10<sup>38</sup>,    7-digit precision</li>
+<li><code>double</code> : 64 bits, range from 5.0 × 10<sup>-324</sup> to 1.7 × 10<sup>308</sup>, 15-digit precision</li>
+</ul>
+</li>
+<li>Decimal
+<ul>
+<li><code>decimal</code> : 128 bits, range is at least -7.9 × 10<sup>-28</sup> to 7.9 × 10<sup>28</sup>, with at least 28-digit precision</li>
+</ul>
+</li>
+</ul>
+<p>C# programs use <em>type declarations</em> to create new types. A type declaration specifies the name and the members of the new type. Five of C#’s categories of types are user-definable: class types, struct types, interface types, enum types, and delegate types.</p>
+<p>A <code>class</code> type defines a data structure that contains data members (fields) and function members (methods, properties, and others). Class types support single inheritance and polymorphism, mechanisms whereby derived classes can extend and specialize base classes.</p>
+<p>A <code>struct</code> type is similar to a class type in that it represents a structure with data members and function members. However, unlike classes, structs are value types and do not typically require heap allocation. Struct types do not support user-specified inheritance, and all struct types implicitly inherit from type <code>object</code>.</p>
+<p>An <code>interface</code> type defines a contract as a named set of public function members. A <code>class</code> or <code>struct</code> that implements an <code>interface</code> must provide implementations of the interface’s function members. An <code>interface</code> may inherit from multiple base interfaces, and a <code>class</code> or <code>struct</code> may implement multiple interfaces.</p>
+<p>A <code>delegate</code> type represents references to methods with a particular parameter list and return type. Delegates make it possible to treat methods as entities that can be assigned to variables and passed as parameters. Delegates are analogous to function types provided by functional languages. They are also similar to the concept of function pointers found in some other languages, but unlike function pointers, delegates are object-oriented and type-safe.</p>
+<p>The <code>class</code>, <code>struct</code>, <code>interface</code> and <code>delegate</code> types all support generics, whereby they can be parameterized with other types.</p>
+<p>An <code>enum</code> type is a distinct type with named constants. Every <code>enum</code> type has an underlying type, which must be one of the eight integral types. The set of values of an <code>enum</code> type is the same as the set of values of the underlying type.</p>
+<p>C# supports single- and multi-dimensional arrays of any type. Unlike the types listed above, array types do not have to be declared before they can be used. Instead, array types are constructed by following a type name with square brackets. For example, <code>int[]</code> is a single-dimensional array of <code>int</code>, <code>int[,]</code> is a two-dimensional array of <code>int</code>, and <code>int[][]</code> is a single-dimensional array of single-dimensional array of <code>int</code>.</p>
+<p>Nullable value types also do not have to be declared before they can be used. For each non-nullable value type <code>T</code> there is a corresponding nullable value type <code>T?</code>, which can hold an additional value, <code>null</code>. For instance, <code>int?</code> is a type that can hold any 32-bit integer or the value <code>null</code>.</p>
+<p>C#’s type system is unified such that a value of any type can be treated as an <code>object</code>. Every type in C# directly or indirectly derives from the <code>object</code> class type, and <code>object</code> is the ultimate base class of all types. Values of reference types are treated as objects simply by viewing the values as type <code>object</code>. Values of value types are treated as objects by performing <em>boxing</em> and <em>unboxing operations</em>. In the following example, an <code>int</code> value is converted to <code>object</code> and back again to <code>int</code>.</p>
+<pre><code class="lang-csharp" name="Boxing">using System;
+class BoxingExample
+{
+static void Main()
+{
+int i = 123;
+object o = i;    // Boxing
+int j = (int)o;  // Unboxing
+}
+}
+</code></pre>
+<p>When a value of a value type is converted to type <code>object</code>, an <code>object</code> instance, also called a &quot;box&quot;, is allocated to hold the value, and the value is copied into that box. Conversely, when an <code>object</code> reference is cast to a value type, a check is made that the referenced <code>object</code> is a box of the correct value type, and, if the check succeeds, the value in the box is copied out.</p>
+<p>C#’s unified type system effectively means that value types can become objects &quot;on demand.&quot; Because of the unification, general-purpose libraries that use type <code>object</code> can be used with both reference types and value types.</p>
+<p>There are several kinds of <em>variables</em> in C#, including fields, array elements, local variables, and parameters. Variables represent storage locations, and every variable has a type that determines what values can be stored in the variable, as shown below.</p>
+<ul>
+<li>Non-nullable value type
+<ul>
+<li>A value of that exact type</li>
+</ul>
+</li>
+<li>Nullable value type
+<ul>
+<li>A <code>null</code> value or a value of that exact type</li>
+</ul>
+</li>
+<li>object
+<ul>
+<li>A <code>null</code> reference, a reference to an object of any reference type, or a reference to a boxed value of any value type</li>
+</ul>
+</li>
+<li>Class type
+<ul>
+<li>A <code>null</code> reference, a reference to an instance of that class type, or a reference to an instance of a class derived from that class type</li>
+</ul>
+</li>
+<li>Interface type
+<ul>
+<li>A <code>null</code> reference, a reference to an instance of a class type that implements that interface type, or a reference to a boxed value of a value type that implements that interface type</li>
+</ul>
+</li>
+<li>Array type
+<ul>
+<li>A <code>null</code> reference, a reference to an instance of that array type, or a reference to an instance of a compatible array type</li>
+</ul>
+</li>
+<li>Delegate type
+<ul>
+<li>A <code>null</code> reference or a reference to an instance of a compatible delegate type</li>
+</ul>
+</li>
+</ul>
+<!--
+<div class="step-by-step">
+<p><a href="program-structure" data-linktype="relative-path">Previous</a>
+<a href="expressions" data-linktype="relative-path">Next</a></p>
+</div>
+-->
+
+                <!-- </content> -->
+            
+    </div>
+</section>
+
+<section id="Expressions" class="main-section">
+    <header>
+        <h2 class="main-section-heading">Expressions</h2>
+    </header>
+    <div class="section-content">
+
+
+                <!-- <content> -->
+                    
+<p><em>Expressions</em> are constructed from <em>operands</em> and <em>operators</em>. The operators of an expression indicate which operations to apply to the operands. Examples of operators include <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, and <code>new</code>. Examples of operands include literals, fields, local variables, and expressions.</p>
+<p>When an expression contains multiple operators, the <em>precedence</em> of the operators controls the order in which the individual operators are evaluated. For example, the expression <code>x + y * z</code> is evaluated as <code>x + (y * z)</code> because the <code>*</code> operator has higher precedence than the <code>+</code> operator.</p>
+<p>When an operand occurs between two operators with the same precedence, the <em>associativity</em> of the operators controls the order in which the operations are performed:</p>
+<ul>
+<li>Except for the assignment operators, all binary operators are <em>left-associative</em>, meaning that operations are performed from left to right. For example, <code>x + y + z</code> is evaluated as <code>(x + y) + z</code>.</li>
+<li>The assignment operators and the conditional operator (<code>?:</code>) are <em>right-associative</em>, meaning that operations are performed from right to left. For example, <code>x = y = z</code> is evaluated as <code>x = (y = z)</code>.</li>
+</ul>
+<p>Precedence and associativity can be controlled using parentheses. For example, <code>x + y * z</code> first multiplies <code>y</code> by <code>z</code> and then adds the result to <code>x</code>, but <code>(x + y) * z</code> first adds <code>x</code> and <code>y</code> and then multiplies the result by <code>z</code>.</p>
+<p>Most operators can be <a href="../language-reference/keywords/operator" data-linktype="relative-path"><em>overloaded</em></a>. Operator overloading permits user-defined operator implementations to be specified for operations where one or both of the operands are of a user-defined class or struct type.</p>
+<p>C# provides a number of operators to perform <a href="../language-reference/operators/arithmetic-operators" data-linktype="relative-path">arithmetic</a>, <a href="../language-reference/operators/boolean-logical-operators" data-linktype="relative-path">logical</a>, <a href="../language-reference/operators/bitwise-and-shift-operators" data-linktype="relative-path">bitwise and shift</a> operations and <a href="../language-reference/operators/equality-operators" data-linktype="relative-path">equality</a> and <a href="../language-reference/operators/comparison-operators" data-linktype="relative-path">order</a> comparisons.</p>
+<p>For the complete list of C# operators ordered by precedence level, see <a href="../language-reference/operators/index" data-linktype="relative-path">C# operators</a>.</p>
+                        
+                <!-- </content> -->
+                                        
+    </div>
+</section>
+
+<section id="Statements" class="main-section">
+    <header>
+        <h2 class="main-section-heading">Statements</h2>
+    </header>
+    <div class="section-content">
+
+                <!-- <content> -->
+                    
+<p>The actions of a program are expressed using <em>statements</em>. C# supports several different kinds of statements, a number of which are defined in terms of embedded statements.</p>
+<p>A <em>block</em> permits multiple statements to be written in contexts where a single statement is allowed. A block consists of a list of statements written between the delimiters <code>{</code> and <code>}</code>.</p>
+<p><em>Declaration statements</em> are used to declare local variables and constants.</p>
+<p><em>Expression statements</em> are used to evaluate expressions. Expressions that can be used as statements include method invocations, object allocations using the <code>new</code> operator, assignments using <code>=</code> and the compound assignment operators, increment and decrement operations using the <code>++</code> and <code>--</code> operators and <code>await</code> expressions.</p>
+<p><em>Selection statements</em> are used to select one of a number of possible statements for execution based on the value of some expression. In this group are the <code>if</code> and <code>switch</code> statements.</p>
+<p><em>Iteration statements</em> are used to execute repeatedly an embedded statement. In this group are the <code>while</code>, <code>do</code>, <code>for</code>, and <code>foreach</code> statements.</p>
+<p><em>Jump statements</em> are used to transfer control. In this group are the <code>break</code>, <code>continue</code>, <code>goto</code>, <code>throw</code>, <code>return</code>, and <code>yield</code> statements.</p>
+<p>The <code>try</code>...<code>catch</code> statement is used to catch exceptions that occur during execution of a block, and the <code>try</code>...<code>finally</code> statement is used to specify finalization code that is always executed, whether an exception occurred or not.</p>
+<p>The <code>checked</code> and <code>unchecked</code> statements are used to control the overflow-checking context for integral-type arithmetic operations and conversions.</p>
+<p>The <code>lock</code> statement is used to obtain the mutual-exclusion lock for a given object, execute a statement, and then release the lock.</p>
+<p>The <code>using</code> statement is used to obtain a resource, execute a statement, and then dispose of that resource.</p>
+<p>The following lists the kinds of statements that can be used, and provides an example for each.</p>
+<ul>
+<li>Local variable declaration:</li>
+</ul>
+<pre><code class="lang-csharp" name="Declarations">static void Declarations(string[] args)
+{
+int a;
+int b = 2, c = 3;
+a = 1;
+Console.WriteLine(a + b + c);
+}
+</code></pre>
+<ul>
+<li>Local constant declaration:</li>
+</ul>
+<pre><code class="lang-csharp" name="ConstantDeclarations">static void ConstantDeclarations(string[] args)
+{
+const float pi = 3.1415927f;
+const int r = 25;
+Console.WriteLine(pi * r * r);
+}
+</code></pre>
+<ul>
+<li>Expression statement:</li>
+</ul>
+<pre><code class="lang-csharp" name="Expressions">static void Expressions(string[] args)
+{
+int i;
+i = 123;                // Expression statement
+Console.WriteLine(i);   // Expression statement
+i++;                    // Expression statement
+Console.WriteLine(i);   // Expression statement
+}
+</code></pre>
+<ul>
+<li><code>if</code> statement:</li>
+</ul>
+<pre><code class="lang-csharp" name="IfStatement">static void IfStatement(string[] args)
+{
+if (args.Length == 0)
+{
+Console.WriteLine(&quot;No arguments&quot;);
+}
+else 
+{
+Console.WriteLine(&quot;One or more arguments&quot;);
+}
+}
+</code></pre>
+<ul>
+<li><code>switch</code> statement:</li>
+</ul>
+<pre><code class="lang-csharp" name="SwitchStatement">static void SwitchStatement(string[] args)
+{
+int n = args.Length;
+switch (n) 
+{
+case 0:
+    Console.WriteLine(&quot;No arguments&quot;);
+    break;
+case 1:
+    Console.WriteLine(&quot;One argument&quot;);
+    break;
+default:
+    Console.WriteLine($&quot;{n} arguments&quot;);
+    break;
+}
+}
+</code></pre>
+<ul>
+<li><code>while</code> statement:</li>
+</ul>
+<pre><code class="lang-csharp" name="WhileStatement">static void WhileStatement(string[] args)
+{
+int i = 0;
+while (i &lt; args.Length) 
+{
+Console.WriteLine(args[i]);
+i++;
+}
+}
+</code></pre>
+<ul>
+<li><code>do</code> statement:</li>
+</ul>
+<pre><code class="lang-csharp" name="DoStatement">static void DoStatement(string[] args)
+{
+string s;
+do 
+{
+s = Console.ReadLine();
+Console.WriteLine(s);
+} while (!string.IsNullOrEmpty(s));
+}
+
+</code></pre>
+<ul>
+<li><code>for</code> statement:</li>
+</ul>
+<pre><code class="lang-csharp" name="ForStatement">static void ForStatement(string[] args)
+{
+for (int i = 0; i &lt; args.Length; i++) 
+{
+Console.WriteLine(args[i]);
+}
+}
+</code></pre>
+<ul>
+<li><code>foreach</code> statement:</li>
+</ul>
+<pre><code class="lang-csharp" name="ForEachStatement">static void ForEachStatement(string[] args)
+{
+foreach (string s in args) 
+{
+Console.WriteLine(s);
+}
+}
+</code></pre>
+<ul>
+<li><code>break</code> statement:</li>
+</ul>
+<pre><code class="lang-csharp" name="BreakStatement">static void BreakStatement(string[] args)
+{
+while (true) 
+{
+string s = Console.ReadLine();
+if (string.IsNullOrEmpty(s)) 
+    break;
+Console.WriteLine(s);
+}
+}
+</code></pre>
+<ul>
+<li><code>continue</code> statement:</li>
+</ul>
+<pre><code class="lang-csharp" name="ContinueStatement">static void ContinueStatement(string[] args)
+{
+for (int i = 0; i &lt; args.Length; i++) 
+{
+if (args[i].StartsWith(&quot;/&quot;)) 
+    continue;
+Console.WriteLine(args[i]);
+}
+}
+</code></pre>
+<ul>
+<li><code>goto</code> statement:</li>
+</ul>
+<pre><code class="lang-csharp" name="GotoStatement">static void GoToStatement(string[] args)
+{
+int i = 0;
+goto check;
+loop:
+Console.WriteLine(args[i++]);
+check:
+if (i &lt; args.Length) 
+goto loop;
+}
+</code></pre>
+<ul>
+<li><code>return</code> statement:</li>
+</ul>
+<pre><code class="lang-csharp" name="ReturnStatement">static int Add(int a, int b) 
+{
+return a + b;
+}
+static void ReturnStatement(string[] args)
+{
+Console.WriteLine(Add(1, 2));
+return;
+}
+</code></pre>
+<ul>
+<li><code>yield</code> statement:</li>
+</ul>
+<pre><code class="lang-csharp" name="YieldStatement">static System.Collections.Generic.IEnumerable&lt;int&gt; Range(int from, int to) 
+{
+for (int i = from; i &lt; to; i++) 
+{
+yield return i;
+}
+yield break;
+}
+static void YieldStatement(string[] args)
+{
+foreach (int i in Range(-10,10)) 
+{
+Console.WriteLine(i);
+}
+}
+</code></pre>
+<ul>
+<li><code>throw</code> statements and <code>try</code> statements:</li>
+</ul>
+<pre><code class="lang-csharp" name="TryThrow">static double Divide(double x, double y) 
+{
+if (y == 0) 
+throw new DivideByZeroException();
+return x / y;
+}
+static void TryCatch(string[] args) 
+{
+try 
+{
+if (args.Length != 2) 
+{
+    throw new InvalidOperationException(&quot;Two numbers required&quot;);
+}
+double x = double.Parse(args[0]);
+double y = double.Parse(args[1]);
+Console.WriteLine(Divide(x, y));
+}
+catch (InvalidOperationException e) 
+{
+Console.WriteLine(e.Message);
+}
+finally 
+{
+Console.WriteLine(&quot;Good bye!&quot;);
+}
+}
+</code></pre>
+<ul>
+<li><code>checked</code> and <code>unchecked</code> statements:</li>
+</ul>
+<pre><code class="lang-csharp" name="CheckedUncheckedStatement">static void CheckedUnchecked(string[] args) 
+{
+int x = int.MaxValue;
+unchecked 
+{
+Console.WriteLine(x + 1);  // Overflow
+}
+checked 
+{
+Console.WriteLine(x + 1);  // Exception
+}     
+}
+</code></pre>
+<ul>
+<li><code>lock</code> statement:</li>
+</ul>
+<pre><code class="lang-csharp" name="LockStatement">class Account
+{
+decimal balance;
+private readonly object sync = new object();
+public void Withdraw(decimal amount) 
+{
+lock (sync) 
+{
+    if (amount &gt; balance) 
+    {
+        throw new Exception(
+            &quot;Insufficient funds&quot;);
+    }
+    balance -= amount;
+}
+}
+}
+</code></pre>
+<ul>
+<li><code>using</code> statement:</li>
+</ul>
+<pre><code class="lang-csharp" name="UsingStatement">static void UsingStatement(string[] args) 
+{
+using (TextWriter w = File.CreateText(&quot;test.txt&quot;)) 
+{
+w.WriteLine(&quot;Line one&quot;);
+w.WriteLine(&quot;Line two&quot;);
+w.WriteLine(&quot;Line three&quot;);
+}
+}
+</code></pre>
+
+                <!-- </content> -->
+                        
+                                                                                                    
+    </div>
+</section>
+
+<section id="Classes_and_Objects" class="main-section">
+    <header>
+        <h2 class="main-section-heading">Classes and Objects</h2>
+    </header>
+    <div class="section-content">
+
+            
+                <!-- <content> -->
+                    
+<p><em>Classes</em> are the most fundamental of C#’s types. A class is a data structure that combines state (fields) and actions (methods and other function members) in a single unit. A class provides a definition for dynamically created <em>instances</em> of the class, also known as <em>objects</em>. Classes support <em>inheritance</em> and <em>polymorphism</em>, mechanisms whereby <em>derived classes</em> can extend and specialize <em>base classes</em>.</p>
+<p>New classes are created using class declarations. A class declaration starts with a header that specifies the attributes and modifiers of the class, the name of the class, the base class (if given), and the interfaces implemented by the class. The header is followed by the class body, which consists of a list of member declarations written between the delimiters <code>{</code> and <code>}</code>.</p>
+<p>The following is a declaration of a simple class named <code>Point</code>:</p>
+<pre><code class="lang-csharp" name="PointClass">public class Point
+{
+public int x, y;
+public Point(int x, int y) 
+{
+this.x = x;
+this.y = y;
+}
+}
+</code></pre>
+<p>Instances of classes are created using the <code>new</code> operator, which allocates memory for a new instance, invokes a constructor to initialize the instance, and returns a reference to the instance. The following statements create two Point objects and store references to those objects in two variables:</p>
+<pre><code class="lang-csharp" name="PointExample">Point p1 = new Point(0, 0);
+Point p2 = new Point(10, 20);
+</code></pre>
+<p>The memory occupied by an object is automatically reclaimed when the object is no longer reachable. It is neither necessary nor possible to explicitly deallocate objects in C#.</p>
+<h2 id="members">Members</h2>
+<p>The members of a class are either static members or instance members. Static members belong to classes, and instance members belong to objects (instances of classes).</p>
+<p>The following provides an overview of the kinds of members a class can contain.</p>
+<ul>
+<li>Constants
+<ul>
+<li>Constant values associated with the class</li>
+</ul>
+</li>
+<li>Fields
+<ul>
+<li>Variables of the class</li>
+</ul>
+</li>
+<li>Methods
+<ul>
+<li>Computations and actions that can be performed by the class</li>
+</ul>
+</li>
+<li>Properties
+<ul>
+<li>Actions associated with reading and writing named properties of the class</li>
+</ul>
+</li>
+<li>Indexers
+<ul>
+<li>Actions associated with indexing instances of the class like an array</li>
+</ul>
+</li>
+<li>Events
+<ul>
+<li>Notifications that can be generated by the class</li>
+</ul>
+</li>
+<li>Operators
+<ul>
+<li>Conversions and expression operators supported by the class</li>
+</ul>
+</li>
+<li>Constructors
+<ul>
+<li>Actions required to initialize instances of the class or the class itself</li>
+</ul>
+</li>
+<li>Finalizers
+<ul>
+<li>Actions to perform before instances of the class are permanently discarded</li>
+</ul>
+</li>
+<li>Types
+<ul>
+<li>Nested types declared by the class</li>
+</ul>
+</li>
+</ul>
+<h2 id="accessibility">Accessibility</h2>
+<p>Each member of a class has an associated accessibility, which controls the regions of program text that are able to access the member. There are six possible forms of accessibility. These are summarized below.</p>
+<ul>
+<li><code>public</code>
+<ul>
+<li>Access not limited</li>
+</ul>
+</li>
+<li><code>protected</code>
+<ul>
+<li>Access limited to this class or classes derived from this class</li>
+</ul>
+</li>
+<li><code>internal</code>
+<ul>
+<li>Access limited to the current assembly (.exe, .dll, etc.)</li>
+</ul>
+</li>
+<li><code>protected internal</code>
+<ul>
+<li>Access limited to the containing class, classes derived from the containing class, or classes within the same assembly</li>
+</ul>
+</li>
+<li><code>private</code>
+<ul>
+<li>Access limited to this class</li>
+</ul>
+</li>
+<li><code>private protected</code>
+<ul>
+<li>Access limited to the containing class or classes derived from the containing type within the same assembly</li>
+</ul>
+</li>
+</ul>
+<h2 id="type-parameters">Type parameters</h2>
+<p>A class definition may specify a set of type parameters by following the class name with angle brackets enclosing a list of type parameter names. The type parameters can then be used in the body of the class declarations to define the members of the class. In the following example, the type parameters of <code>Pair</code> are <code>TFirst</code> and <code>TSecond</code>:</p>
+<pre><code class="lang-csharp" name="Pair">public class Pair&lt;TFirst,TSecond&gt;
+{
+public TFirst First;
+public TSecond Second;
+}
+</code></pre>
+<p>A class type that is declared to take type parameters is called a <em>generic class type</em>. Struct, interface and delegate types can also be generic.
+When the generic class is used, type arguments must be provided for each of the type parameters:</p>
+<pre><code class="lang-csharp" name="PairExample">Pair&lt;int,string&gt; pair = new Pair&lt;int,string&gt; { First = 1, Second = &quot;two&quot; };
+int i = pair.First;     // TFirst is int
+string s = pair.Second; // TSecond is string
+</code></pre>
+<p>A generic type with type arguments provided, like <code>Pair&lt;int,string&gt;</code> above, is called a <em>constructed type</em>.</p>
+<h2 id="base-classes">Base classes</h2>
+<p>A class declaration may specify a base class by following the class name and type parameters with a colon and the name of the base class. Omitting a base class specification is the same as deriving from type <code>object</code>. In the following example, the base class of <code>Point3D</code> is <code>Point</code>, and the base class of <code>Point</code> is <code>object</code>:</p>
+<pre><code class="lang-csharp" name="Point3DClass">public class Point
+{
+public int x, y;
+public Point(int x, int y) 
+{
+this.x = x;
+this.y = y;
+}
+}
+public class Point3D: Point
+{
+public int z;
+public Point3D(int x, int y, int z) : 
+base(x, y) 
+{
+this.z = z;
+}
+}
+</code></pre>
+<p>A class inherits the members of its base class. Inheritance means that a class implicitly contains all members of its base class, except for the instance and static constructors, and the finalizers of the base class. A derived class can add new members to those it inherits, but it cannot remove the definition of an inherited member. In the previous example, <code>Point3D</code> inherits the <code>x</code> and <code>y</code> fields from <code>Point</code>, and every <code>Point3D</code> instance contains three fields, <code>x</code>, <code>y</code>, and <code>z</code>.</p>
+<p>An implicit conversion exists from a class type to any of its base class types. Therefore, a variable of a class type can reference an instance of that class or an instance of any derived class. For example, given the previous class declarations, a variable of type <code>Point</code> can reference either a <code>Point</code> or a <code>Point3D</code>:</p>
+<pre><code class="lang-csharp" name="Point3DExample">Point a = new Point(10, 20);
+Point b = new Point3D(10, 20, 30);
+</code></pre><h2 id="fields">Fields</h2>
+<p>A <em>field</em> is a variable that is associated with a class or with an instance of a class.</p>
+<p>A field declared with the static modifier defines a static field. A static field identifies exactly one storage location. No matter how many instances of a class are created, there is only ever one copy of a static field.</p>
+<p>A field declared without the static modifier defines an instance field. Every instance of a class contains a separate copy of all the instance fields of that class.</p>
+<p>In the following example, each instance of the <code>Color</code> class has a separate copy of the <code>r</code>, <code>g</code>, and <code>b</code> instance fields, but there is only one copy of the <code>Black</code>, <code>White</code>, <code>Red</code>, <code>Green</code>, and <code>Blue</code> static fields:</p>
+<pre><code class="lang-csharp" name="ColorClass">public class Color
+{
+public static readonly Color Black = new Color(0, 0, 0);
+public static readonly Color White = new Color(255, 255, 255);
+public static readonly Color Red = new Color(255, 0, 0);
+public static readonly Color Green = new Color(0, 255, 0);
+public static readonly Color Blue = new Color(0, 0, 255);
+private byte r, g, b;
+public Color(byte r, byte g, byte b) 
+{
+this.r = r;
+this.g = g;
+this.b = b;
+}
+}
+</code></pre>
+<p>As shown in the previous example, <em>read-only fields</em> may be declared with a <code>readonly</code> modifier. Assignment to a <code>readonly</code> field can only occur as part of the field’s declaration or in a constructor in the same class.</p>
+<h2 id="methods">Methods</h2>
+<p>A <em>method</em> is a member that implements a computation or action that can be performed by an object or class. <em>Static methods</em> are accessed through the class. <em>Instance methods</em> are accessed through instances of the class.</p>
+<p>Methods may have a list of <em>parameters</em>, which represent values or variable references passed to the method, and a <em>return type</em>, which specifies the type of the value computed and returned by the method. A method’s return type is <code>void</code> if it does not return a value.</p>
+<p>Like types, methods may also have a set of type parameters, for which type arguments must be specified when the method is called. Unlike types, the type arguments can often be inferred from the arguments of a method call and need not be explicitly given.</p>
+<p>The <em>signature</em> of a method must be unique in the class in which the method is declared. The signature of a method consists of the name of the method, the number of type parameters and the number, modifiers, and types of its parameters. The signature of a method does not include the return type.</p>
+<h3 id="parameters">Parameters</h3>
+<p>Parameters are used to pass values or variable references to methods. The parameters of a method get their actual values from the <em>arguments</em> that are specified when the method is invoked. There are four kinds of parameters: value parameters, reference parameters, output parameters, and parameter arrays.</p>
+<p>A <em>value parameter</em> is used for passing input arguments. A value parameter corresponds to a local variable that gets its initial value from the argument that was passed for the parameter. Modifications to a value parameter do not affect the argument that was passed for the parameter.</p>
+<p>Value parameters can be optional, by specifying a default value so that corresponding arguments can be omitted.</p>
+<p>A <em>reference parameter</em> is used for passing arguments by reference. The argument passed for a reference parameter must be a variable with a definite value, and during execution of the method, the reference parameter represents the same storage location as the argument variable. A reference parameter is declared with the <code>ref</code> modifier. The following example shows the use of <code>ref</code> parameters.</p>
+<pre><code class="lang-csharp" name="swapExample">using System;
+class RefExample
+{
+static void Swap(ref int x, ref int y) 
+{
+int temp = x;
+x = y;
+y = temp;
+}
+public static void SwapExample() 
+{
+int i = 1, j = 2;
+Swap(ref i, ref j);
+Console.WriteLine($&quot;{i} {j}&quot;);    // Outputs &quot;2 1&quot;
+}
+}
+</code></pre>
+<p>An <em>output parameter</em> is used for passing arguments by reference. It's similar to a reference parameter, except that it doesn't require that you explicitly assign a value to the caller-provided argument. An output parameter is declared with the <code>out</code> modifier. The following example shows the use of <code>out</code> parameters using the syntax introduced in C# 7.</p>
+<pre><code class="lang-csharp" name="OutExample">    using System;
+class OutExample
+{
+static void Divide(int x, int y, out int result, out int remainder) 
+{
+    result = x / y;
+    remainder = x % y;
+}
+public static void OutUsage() 
+{
+    Divide(10, 3, out int res, out int rem);
+    Console.WriteLine(&quot;{0} {1}&quot;, res, rem);	// Outputs &quot;3 1&quot;
+}
+}
+}
+</code></pre>
+<p>A <em>parameter array</em> permits a variable number of arguments to be passed to a method. A parameter array is declared with the <code>params</code> modifier. Only the last parameter of a method can be a parameter array, and the type of a parameter array must be a single-dimensional array type. The Write and WriteLine methods of the <a class="xref" href="/en-us/dotnet/api/system.console" data-linktype="absolute-path">System.Console</a> class are good examples of parameter array usage. They are declared as follows.</p>
+<pre><code class="lang-csharp" name="ConsoleExample">public class Console
+{
+public static void Write(string fmt, params object[] args) { }
+public static void WriteLine(string fmt, params object[] args) { }
+// ...
+}
+</code></pre>
+<p>Within a method that uses a parameter array, the parameter array behaves exactly like a regular parameter of an array type. However, in an invocation of a method with a parameter array, it is possible to pass either a single argument of the parameter array type or any number of arguments of the element type of the parameter array. In the latter case, an array instance is automatically created and initialized with the given arguments. This example</p>
+<pre><code class="lang-csharp" name="StringFormat">Console.WriteLine(&quot;x={0} y={1} z={2}&quot;, x, y, z);
+</code></pre>
+<p>is equivalent to writing the following.</p>
+<pre><code class="lang-csharp" name="StringFormat2">string s = &quot;x={0} y={1} z={2}&quot;;
+object[] args = new object[3];
+args[0] = x;
+args[1] = y;
+args[2] = z;
+Console.WriteLine(s, args);
+</code></pre><h3 id="method-body-and-local-variables">Method body and local variables</h3>
+<p>A method’s body specifies the statements to execute when the method is invoked.</p>
+<p>A method body can declare variables that are specific to the invocation of the method. Such variables are called <em>local variables</em>. A local variable declaration specifies a type name, a variable name, and possibly an initial value. The following example declares a local variable <code>i</code> with an initial value of zero and a local variable <code>j</code> with no initial value.</p>
+<pre><code class="lang-csharp" name="Squares">using System;
+class Squares
+{
+public static void WriteSquares() 
+{
+int i = 0;
+int j;
+while (i &lt; 10) 
+{
+    j = i * i;
+    Console.WriteLine($&quot;{i} x {i} = {j}&quot;);
+    i = i + 1;
+}
+}
+}
+</code></pre>
+<p>C# requires a local variable to be <em>definitely assigned</em> before its value can be obtained. For example, if the declaration of the previous <code>i</code> did not include an initial value, the compiler would report an error for the subsequent usages of <code>i</code> because <code>i</code> would not be definitely assigned at those points in the program.</p>
+<p>A method can use <code>return</code> statements to return control to its caller. In a method returning <code>void</code>, <code>return</code> statements cannot specify an expression. In a method returning non-void, <code>return</code> statements must include an expression that computes the return value.</p>
+<h3 id="static-and-instance-methods">Static and instance methods</h3>
+<p>A method declared with a static modifier is a <em>static method</em>. A static method does not operate on a specific instance and can only directly access static members.</p>
+<p>A method declared without a static modifier is an <em>instance method</em>. An instance method operates on a specific instance and can access both static and instance members. The instance on which an instance method was invoked can be explicitly accessed as <code>this</code>. It is an error to refer to <code>this</code> in a static method.</p>
+<p>The following <code>Entity</code> class has both static and instance members.</p>
+<pre><code class="lang-csharp" name="Entity">class Entity
+{
+static int nextSerialNo;
+int serialNo;
+public Entity() 
+{
+serialNo = nextSerialNo++;
+}
+public int GetSerialNo() 
+{
+return serialNo;
+}
+public static int GetNextSerialNo() 
+{
+return nextSerialNo;
+}
+public static void SetNextSerialNo(int value) 
+{
+nextSerialNo = value;
+}
+}
+</code></pre>
+<p>Each <code>Entity</code> instance contains a serial number (and presumably some other information that is not shown here). The <code>Entity</code> constructor (which is like an instance method) initializes the new instance with the next available serial number. Because the constructor is an instance member, it is permitted to access both the <code>serialNo</code> instance field and the <code>nextSerialNo</code> static field.</p>
+<p>The <code>GetNextSerialNo</code> and <code>SetNextSerialNo</code> static methods can access the <code>nextSerialNo</code> static field, but it would be an error for them to directly access the <code>serialNo</code> instance field.</p>
+<p>The following example shows the use of the Entity class.</p>
+<pre><code class="lang-csharp" name="EntityExample">using System;
+class EntityExample
+{
+public static void Usage() 
+{
+Entity.SetNextSerialNo(1000);
+Entity e1 = new Entity();
+Entity e2 = new Entity();
+Console.WriteLine(e1.GetSerialNo());            // Outputs &quot;1000&quot;
+Console.WriteLine(e2.GetSerialNo());            // Outputs &quot;1001&quot;
+Console.WriteLine(Entity.GetNextSerialNo());    // Outputs &quot;1002&quot;
+}
+}
+</code></pre>
+<p>Note that the <code>SetNextSerialNo</code> and <code>GetNextSerialNo</code> static methods are invoked on the class whereas the <code>GetSerialNo</code> instance method is invoked on instances of the class.</p>
+<h3 id="virtual-override-and-abstract-methods">Virtual, override, and abstract methods</h3>
+<p>When an instance method declaration includes a <code>virtual</code> modifier, the method is said to be a <em>virtual method</em>. When no virtual modifier is present, the method is said to be a <em>nonvirtual method</em>.</p>
+<p>When a virtual method is invoked, the <em>run-time type</em> of the instance for which that invocation takes place determines the actual method implementation to invoke. In a nonvirtual method invocation, the <em>compile-time type</em> of the instance is the determining factor.</p>
+<p>A virtual method can be <em>overridden</em> in a derived class. When an instance method declaration includes an override modifier, the method overrides an inherited virtual method with the same signature. Whereas a virtual method declaration introduces a new method, an override method declaration specializes an existing inherited virtual method by providing a new implementation of that method.</p>
+<p>An <em>abstract method</em> is a virtual method with no implementation. An abstract method is declared with the abstract modifier and is permitted only in a class that is also declared abstract. An abstract method must be overridden in every non-abstract derived class.</p>
+<p>The following example declares an abstract class, <code>Expression</code>, which represents an expression tree node, and three derived classes, <code>Constant</code>, <code>VariableReference</code>, and <code>Operation</code>, which implement expression tree nodes for constants, variable references, and arithmetic operations. (This is similar to, but not to be confused with the expression tree types).</p>
+<pre><code class="lang-csharp" name="ExpressionClass">using System;
+using System.Collections.Generic;
+public abstract class Expression
+{
+public abstract double Evaluate(Dictionary&lt;string,object&gt; vars);
+}
+public class Constant: Expression
+{
+double value;
+public Constant(double value) 
+{
+this.value = value;
+}
+public override double Evaluate(Dictionary&lt;string,object&gt; vars) 
+{
+return value;
+}
+}
+public class VariableReference: Expression
+{
+string name;
+public VariableReference(string name) 
+{
+this.name = name;
+}
+public override double Evaluate(Dictionary&lt;string,object&gt; vars) 
+{
+object value = vars[name];
+if (value == null) 
+{
+    throw new Exception(&quot;Unknown variable: &quot; + name);
+}
+return Convert.ToDouble(value);
+}
+}
+public class Operation: Expression
+{
+Expression left;
+char op;
+Expression right;
+public Operation(Expression left, char op, Expression right) 
+{
+this.left = left;
+this.op = op;
+this.right = right;
+}
+public override double Evaluate(Dictionary&lt;string,object&gt; vars) 
+{
+double x = left.Evaluate(vars);
+double y = right.Evaluate(vars);
+switch (op) {
+    case '+': return x + y;
+    case '-': return x - y;
+    case '*': return x * y;
+    case '/': return x / y;
+}
+throw new Exception(&quot;Unknown operator&quot;);
+}
+}
+</code></pre>
+<p>The previous four classes can be used to model arithmetic expressions. For example, using instances of these classes, the expression <code>x + 3</code> can be represented as follows.</p>
+<pre><code class="lang-csharp" name="ExpressionExample">Expression e = new Operation(
+new VariableReference(&quot;x&quot;),
+'+',
+new Constant(3));
+</code></pre>
+<p>The <code>Evaluate</code> method of an <code>Expression</code> instance is invoked to evaluate the given expression and produce a <code>double</code> value. The method takes a <code>Dictionary</code> argument that contains variable names (as keys of the entries) and values (as values of the entries). Because <code>Evaluate</code> is an abstract method, non-abstract classes derived from <code>Expression</code> must override <code>Evaluate</code>.</p>
+<p>A <code>Constant</code>'s implementation of <code>Evaluate</code> simply returns the stored constant. A <code>VariableReference</code>'s implementation looks up the variable name in the dictionary and returns the resulting value. An <code>Operation</code>'s implementation first evaluates the left and right operands (by recursively invoking their <code>Evaluate</code> methods) and then performs the given arithmetic operation.</p>
+<p>The following program uses the <code>Expression</code> classes to evaluate the expression <code>x * (y + 2)</code> for different values of <code>x</code> and <code>y</code>.</p>
+<pre><code class="lang-csharp" name="ExpressionUsage">using System;
+using System.Collections.Generic;
+class InheritanceExample
+{
+public static void ExampleUsage() 
+{
+Expression e = new Operation(
+    new VariableReference(&quot;x&quot;),
+    '*',
+    new Operation(
+        new VariableReference(&quot;y&quot;),
+        '+',
+        new Constant(2)
+    )
+);
+Dictionary&lt;string,object&gt; vars = new Dictionary&lt;string, object&gt;();
+vars[&quot;x&quot;] = 3;
+vars[&quot;y&quot;] = 5;
+Console.WriteLine(e.Evaluate(vars));		// Outputs &quot;21&quot;
+vars[&quot;x&quot;] = 1.5;
+vars[&quot;y&quot;] = 9;
+Console.WriteLine(e.Evaluate(vars));		// Outputs &quot;16.5&quot;
+}
+}   
+</code></pre><h3 id="method-overloading">Method overloading</h3>
+<p>Method <em>overloading</em> permits multiple methods in the same class to have the same name as long as they have unique signatures. When compiling an invocation of an overloaded method, the compiler uses <em>overload resolution</em> to determine the specific method to invoke. Overload resolution finds the one method that best matches the arguments or reports an error if no single best match can be found. The following example shows overload resolution in effect. The comment for each invocation in the <code>UsageExample</code> method shows which method is actually invoked.</p>
+<pre><code class="lang-csharp" name="OverloadUsage">using System;
+class OverloadingExample
+{
+static void F() 
+{
+Console.WriteLine(&quot;F()&quot;);
+}
+static void F(object x) 
+{
+Console.WriteLine(&quot;F(object)&quot;);
+}
+static void F(int x) 
+{
+Console.WriteLine(&quot;F(int)&quot;);
+}
+static void F(double x) 
+{
+Console.WriteLine(&quot;F(double)&quot;);
+}
+static void F&lt;T&gt;(T x) 
+{
+Console.WriteLine(&quot;F&lt;T&gt;(T)&quot;);
+}
+static void F(double x, double y) 
+{
+Console.WriteLine(&quot;F(double, double)&quot;);
+}
+public static void UsageExample()
+{
+F();            // Invokes F()
+F(1);           // Invokes F(int)
+F(1.0);         // Invokes F(double)
+F(&quot;abc&quot;);       // Invokes F&lt;string&gt;(string)
+F((double)1);   // Invokes F(double)
+F((object)1);   // Invokes F(object)
+F&lt;int&gt;(1);      // Invokes F&lt;int&gt;(int)
+F(1, 1);        // Invokes F(double, double)
+}
+}
+</code></pre>
+<p>As shown by the example, a particular method can always be selected by explicitly casting the arguments to the exact parameter types and/or explicitly supplying type arguments.</p>
+<h2 id="other-function-members">Other function members</h2>
+<p>Members that contain executable code are collectively known as the <em>function members</em> of a class. The preceding section describes methods, which are the primary kind of function members. This section describes the other kinds of function members supported by C#: constructors, properties, indexers, events, operators, and finalizers.</p>
+<p>The following shows a generic class called <code>MyList&lt;T&gt;</code>, which implements a growable list of objects. The class contains several examples of the most common kinds of function members.</p>
+<div class="NOTE">
+<p>Note</p>
+<p>This example creates a <code>MyList</code> class, which is not the same as the .NET standard <a class="xref" href="/en-us/dotnet/api/system.collections.generic.list-1" data-linktype="absolute-path">System.Collections.Generic.List&lt;T&gt;</a>. It does illustrate the concepts needed for this tour, but is not a replacement for that class.</p>
+</div>
+<pre><code class="lang-csharp" name="ListClass">public class MyList&lt;T&gt;
+{
+// Constant
+const int defaultCapacity = 4;
+
+// Fields
+T[] items;
+int count;
+
+// Constructor
+public MyList(int capacity = defaultCapacity) 
+{
+items = new T[capacity];
+}
+
+// Properties
+public int Count =&gt; count; 
+
+public int Capacity 
+{
+get { return items.Length; }
+set 
+{
+    if (value &lt; count) value = count;
+    if (value != items.Length) 
+    {
+        T[] newItems = new T[value];
+        Array.Copy(items, 0, newItems, 0, count);
+        items = newItems;
+    }
+}
+}
+
+// Indexer
+public T this[int index] 
+{
+get 
+{
+    return items[index];
+}
+set 
+{
+    items[index] = value;
+    OnChanged();
+}
+}
+
+// Methods
+public void Add(T item) 
+{
+if (count == Capacity) Capacity = count * 2;
+items[count] = item;
+count++;
+OnChanged();
+}
+protected virtual void OnChanged() =&gt;
+Changed?.Invoke(this, EventArgs.Empty);
+
+public override bool Equals(object other) =&gt;
+Equals(this, other as MyList&lt;T&gt;);
+
+static bool Equals(MyList&lt;T&gt; a, MyList&lt;T&gt; b) 
+{
+if (Object.ReferenceEquals(a, null)) return Object.ReferenceEquals(b, null);
+if (Object.ReferenceEquals(b, null) || a.count != b.count)
+    return false;
+for (int i = 0; i &lt; a.count; i++) 
+{
+    if (!object.Equals(a.items[i], b.items[i])) 
+    {
+        return false;
+    }
+}
+return true;
+}
+
+// Event
+public event EventHandler Changed;
+
+// Operators
+public static bool operator ==(MyList&lt;T&gt; a, MyList&lt;T&gt; b) =&gt; 
+Equals(a, b);
+
+public static bool operator !=(MyList&lt;T&gt; a, MyList&lt;T&gt; b) =&gt; 
+!Equals(a, b);
+}
+</code></pre><h3 id="constructors">Constructors</h3>
+<p>C# supports both instance and static constructors. An <em>instance constructor</em> is a member that implements the actions required to initialize an instance of a class. A <em>static constructor</em> is a member that implements the actions required to initialize a class itself when it is first loaded.</p>
+<p>A constructor is declared like a method with no return type and the same name as the containing class. If a constructor declaration includes a static modifier, it declares a static constructor. Otherwise, it declares an instance constructor.</p>
+<p>Instance constructors can be overloaded and can have optional parameters. For example, the <code>MyList&lt;T&gt;</code> class declares one instance constructor with a single optional <code>int</code> parameter. Instance constructors are invoked using the <code>new</code> operator. The following statements allocate two <code>MyList&lt;string&gt;</code> instances using the constructor of the <code>MyList</code> class with and without the optional argument.</p>
+<pre><code class="lang-csharp" name="ListExample1">MyList&lt;string&gt; list1 = new MyList&lt;string&gt;();
+MyList&lt;string&gt; list2 = new MyList&lt;string&gt;(10);
+</code></pre>
+<p>Unlike other members, instance constructors are not inherited, and a class has no instance constructors other than those actually declared in the class. If no instance constructor is supplied for a class, then an empty one with no parameters is automatically provided.</p>
+<h3 id="properties">Properties</h3>
+<p><em>Properties</em> are a natural extension of fields. Both are named members with associated types, and the syntax for accessing fields and properties is the same. However, unlike fields, properties do not denote storage locations. Instead, properties have <em>accessors</em> that specify the statements to be executed when their values are read or written.</p>
+<p>A property is declared like a field, except that the declaration ends with a get accessor and/or a set accessor written between the delimiters <code>{</code> and <code>}</code> instead of ending in a semicolon. A property that has both a get accessor and a set accessor is a <em>read-write property</em>, a property that has only a get accessor is a <em>read-only property</em>, and a property that has only a set accessor is a <em>write-only property</em>.</p>
+<p>A get accessor corresponds to a parameterless method with a return value of the property type. Except as the target of an assignment, when a property is referenced in an expression, the get accessor of the property is invoked to compute the value of the property.</p>
+<p>A set accessor corresponds to a method with a single parameter named value and no return type. When a property is referenced as the target of an assignment or as the operand of ++ or --, the set accessor is invoked with an argument that provides the new value.</p>
+<p>The <code>MyList&lt;T&gt;</code> class declares two properties, <code>Count</code> and <code>Capacity</code>, which are read-only and read-write, respectively. The following is an example of use of these properties:</p>
+<pre><code class="lang-csharp" name="ListExample2">MyList&lt;string&gt; names = new MyList&lt;string&gt;();
+names.Capacity = 100;   // Invokes set accessor
+int i = names.Count;    // Invokes get accessor
+int j = names.Capacity; // Invokes get accessor
+</code></pre>
+<p>Similar to fields and methods, C# supports both instance properties and static properties. Static properties are declared with the static modifier, and instance properties are declared without it.</p>
+<p>The accessor(s) of a property can be virtual. When a property declaration includes a <code>virtual</code>, <code>abstract</code>, or <code>override</code> modifier, it applies to the accessor(s) of the property.</p>
+<h3 id="indexers">Indexers</h3>
+<p>An <em>indexer</em> is a member that enables objects to be indexed in the same way as an array. An indexer is declared like a property except that the name of the member is this followed by a parameter list written between the delimiters <code>[</code> and <code>]</code>. The parameters are available in the accessor(s) of the indexer. Similar to properties, indexers can be read-write, read-only, and write-only, and the accessor(s) of an indexer can be virtual.</p>
+<p>The <code>MyList&lt;T&gt;</code> class declares a single read-write indexer that takes an <code>int</code> parameter. The indexer makes it possible to index <code>MyList&lt;T&gt;</code> instances with <code>int</code> values. For example:</p>
+<pre><code class="lang-csharp" name="ListExample3">MyList&lt;string&gt; names = new MyList&lt;string&gt;();
+names.Add(&quot;Liz&quot;);
+names.Add(&quot;Martha&quot;);
+names.Add(&quot;Beth&quot;);
+for (int i = 0; i &lt; names.Count; i++) 
+{
+string s = names[i];
+names[i] = s.ToUpper();
+}
+</code></pre>
+<p>Indexers can be overloaded, meaning that a class can declare multiple indexers as long as the number or types of their parameters differ.</p>
+<h3 id="events">Events</h3>
+<p>An <em>event</em> is a member that enables a class or object to provide notifications. An event is declared like a field except that the declaration includes an event keyword and the type must be a delegate type.</p>
+<p>Within a class that declares an event member, the event behaves just like a field of a delegate type (provided the event is not abstract and does not declare accessors). The field stores a reference to a delegate that represents the event handlers that have been added to the event. If no event handlers are present, the field is <code>null</code>.</p>
+<p>The <code>MyList&lt;T&gt;</code> class declares a single event member called <code>Changed</code>, which indicates that a new item has been added to the list. The Changed event is raised by the <code>OnChanged</code> virtual method, which first checks whether the event is <code>null</code> (meaning that no handlers are present). The notion of raising an event is precisely equivalent to invoking the delegate represented by the event—thus, there are no special language constructs for raising events.</p>
+<p>Clients react to events through <em>event handlers</em>. Event handlers are attached using the <code>+=</code> operator and removed using the <code>-=</code> operator. The following example attaches an event handler to the <code>Changed</code> event of a <code>MyList&lt;string&gt;</code>.</p>
+<pre><code class="lang-csharp" name="EventExample">class EventExample
+{
+static int changeCount;
+static void ListChanged(object sender, EventArgs e) 
+{
+changeCount++;
+}
+public static void Usage() 
+{
+MyList&lt;string&gt; names = new MyList&lt;string&gt;();
+names.Changed += new EventHandler(ListChanged);
+names.Add(&quot;Liz&quot;);
+names.Add(&quot;Martha&quot;);
+names.Add(&quot;Beth&quot;);
+Console.WriteLine(changeCount);		// Outputs &quot;3&quot;
+}
+}
+</code></pre>
+<p>For advanced scenarios where control of the underlying storage of an event is desired, an event declaration can explicitly provide <code>add</code> and <code>remove</code> accessors, which are somewhat similar to the <code>set</code> accessor of a property.</p>
+<h3 id="operators">Operators</h3>
+<p>An <em>operator</em> is a member that defines the meaning of applying a particular expression operator to instances of a class. Three kinds of operators can be defined: unary operators, binary operators, and conversion operators. All operators must be declared as <code>public</code> and <code>static</code>.</p>
+<p>The <code>MyList&lt;T&gt;</code> class declares two operators, <code>operator ==</code> and <code>operator !=</code>, and thus gives new meaning to expressions that apply those operators to <code>MyList</code> instances. Specifically, the operators define equality of two <code>MyList&lt;T&gt;</code> instances as comparing each of the contained objects using their Equals methods. The following example uses the <code>==</code> operator to compare two <code>MyList&lt;int&gt;</code> instances.</p>
+<pre><code class="lang-csharp" name="OperatorExample">MyList&lt;int&gt; a = new MyList&lt;int&gt;();
+a.Add(1);
+a.Add(2);
+MyList&lt;int&gt; b = new MyList&lt;int&gt;();
+b.Add(1);
+b.Add(2);
+Console.WriteLine(a == b);  // Outputs &quot;True&quot; 
+b.Add(3);
+Console.WriteLine(a == b);  // Outputs &quot;False&quot;
+</code></pre>
+<p>The first <code>Console.WriteLine</code> outputs <code>True</code> because the two lists contain the same number of objects with the same values in the same order. Had <code>MyList&lt;T&gt;</code> not defined <code>operator ==</code>, the first <code>Console.WriteLine</code> would have output <code>False</code> because <code>a</code> and <code>b</code> reference different <code>MyList&lt;int&gt;</code> instances.</p>
+<h3 id="finalizers">Finalizers</h3>
+<p>A <em>finalizer</em> is a member that implements the actions required to finalize an instance of a class. Finalizers cannot have parameters, they cannot have accessibility modifiers, and they cannot be invoked explicitly. The finalizer for an instance is invoked automatically during garbage collection.</p>
+<p>The garbage collector is allowed wide latitude in deciding when to collect objects and run finalizers. Specifically, the timing of finalizer invocations is not deterministic, and finalizers may be executed on any thread. For these and other reasons, classes should implement finalizers only when no other solutions are feasible.</p>
+<p>The <code>using</code> statement provides a better approach to object destruction.</p>
+
+                <!-- </content> -->
+                        
+                                            
+    </div>
+</section>
+    
+<section id="Reference" class="main-section">
+    <header>
+        <h2 class="main-section-heading">Reference</h2>
+    </header>
+    <div class="section-content">
+        <p>All the documentation in this page is taken from <a href="https://docs.microsoft.com/en-us/dotnet/csharp/tour-of-csharp" target="_blank">Microsoft</a></p>
+    </div>
+</section>
+
+</main>    
+</body>
