@@ -1,4 +1,4 @@
-# FCC-RWD
+# FCC-Responsive-Web-Design
 
 This repo contains the projects I completed for the freeCodeCamp Responsive Web Design Certificate.
 
